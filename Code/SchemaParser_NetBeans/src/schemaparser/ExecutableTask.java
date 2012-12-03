@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 /**
  * A structure associated with an executable.
+ *
  * @author Gabriel
  */
 public class ExecutableTask {
@@ -26,6 +27,7 @@ public class ExecutableTask {
 
     /**
      * Sets the displayable information.
+     *
      * @param info	The displayable information.
      */
     public void setExecInfo(ExecutableInfo info) {
@@ -34,6 +36,7 @@ public class ExecutableTask {
 
     /**
      * Gets the displayable information.
+     *
      * @return	The displayable information.
      */
     public ExecutableInfo getExecInfo() {
@@ -42,6 +45,7 @@ public class ExecutableTask {
 
     /**
      * Sets the task input file.
+     *
      * @param file	The input file.
      */
     public void setInputFile(String file) {
@@ -50,6 +54,7 @@ public class ExecutableTask {
 
     /**
      * Returns the task output file.
+     *
      * @param file	The output file.
      */
     public void setOutputFile(String file) {
@@ -58,6 +63,7 @@ public class ExecutableTask {
 
     /**
      * Adds parameter for a task.
+     *
      * @param param	The parameter to be added.
      */
     public void addParameter(ExecutableParameter param) {
@@ -66,10 +72,20 @@ public class ExecutableTask {
 
     /**
      * Returns the list of parameters.
+     *
      * @return	The list of parameters.
      */
     public ArrayList<ExecutableParameter> getParams() {
         return execParams;
+    }
+    
+    /**
+     * Sets the task parameters.
+     * 
+     * @param params    The parameters to be set. 
+     */
+    public void setParams(ArrayList<ExecutableParameter> params) {
+        execParams = params;
     }
 
     @Override
@@ -102,6 +118,7 @@ public class ExecutableTask {
 
     /**
      * Returns an XML String, ready to be written to file.
+     *
      * @return	The XML String.
      */
     public String toXMLString() {
@@ -114,7 +131,9 @@ public class ExecutableTask {
         XMLString += "\t<outputFile name=\"" + outputFile + "\" />\n";
 
         for (int i = 0; i < execParams.size(); i++) {
-            XMLString += "\t" + execParams.get(i).toXMLElement() + "\n";
+            if (execParams.get(i).getParamValue() != null) {
+                XMLString += "\t" + execParams.get(i).toXMLElement() + "\n";
+            }
         }
 
         XMLString += "</task>";
