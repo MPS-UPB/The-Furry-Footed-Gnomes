@@ -17,7 +17,7 @@ import org.xml.sax.SAXException;
 public class SchemaParser {
 
     private String fileName;
-    private XSSchema schema;
+    ExecutableTask execTask;
 
     /**
      * Constructor.
@@ -39,7 +39,9 @@ public class SchemaParser {
             XSOMParser schemaParser = new XSOMParser();
             schemaParser.parse(file);
             XSSchemaSet schemaSet = schemaParser.getResult();
-            this.schema = schemaSet.getSchema(1);
+            XSSchema schema = schemaSet.getSchema(1);
+            
+            this.createResult(schema);
 
         } catch (SAXException | IOException ex) {
             Logger.getLogger(SchemaParser.class.getName()).log(Level.SEVERE, null, ex);
@@ -50,12 +52,11 @@ public class SchemaParser {
 
     
     /**
-     * Returns the ExecutableTask created from the Schema tree.
-     * @return	The structure to be used to display UI information and to build XML structures after population.
+     * Creates the ExecutableTask from the Schema tree.
      */
-    public ExecutableTask getResult() {
+    private void createResult(XSSchema schema) {
 
-        ExecutableTask execTask = new ExecutableTask();
+        execTask = new ExecutableTask();
 
         // Get the "task" xs:element.
         XSElementDecl task = schema.getElementDecl("task");
@@ -116,7 +117,7 @@ public class SchemaParser {
                 XSType taskElemType = taskElem.getType();
                 if (taskElemType.isSimpleType()) {
                     
-                    // TODO: check constraints.
+                    // We do not check constraints. They will be validated later.
                     ExecutableParameter param = new ExecutableParameter();
                     param.setParamName(taskElem.getName());
                     
@@ -129,7 +130,13 @@ public class SchemaParser {
             }
         }
 
-
+    }
+    
+    /**
+     * Returns the ExecutableTask created from the Schema tree.
+     * @return	The structure to be used to display UI information and to build XML structures after population.
+     */
+    public ExecutableTask getResult() {
         return execTask;
     }
 }
