@@ -2,6 +2,7 @@
 
 import java.util.ArrayList;
 import schemaparser.*;
+import executor.*;
 
 /**
  *
@@ -50,5 +51,25 @@ public class MainClass {
 		
 		// Generate XML String. It must be validated afterwards for correctness!
         System.out.println(execTask.toXMLString());
+        
+        // Execute a task
+        // exemplification purposes only
+        TaskExecutor executor = new TaskExecutor(execTask);
+        // Execute task without any arguments
+        executor.execute();
+        
+        // Execute task with an array of arguments
+        String[] argsArray = new String[1];
+		// Just one argument for now
+        argsArray[0] = "crop.xml";
+        executor.execute(argsArray);
+        
+        // Validate an .xml against a schema (.xsd)
+        // exemplification
+        boolean isValid = XmlValidator.validateAgainstXSD("crop.xml", "crop.xsd");
+        if (isValid)
+        	System.out.println(".xml file is valid");
+        else
+        	System.out.println(".xml file is NOT valid");
     }
 }
