@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<task>
+	<inputFile name="phototest.tif" />
+	<outputFile name="output.tif" />
+	<top>0</top>
+	<bottom>10</bottom>
+	<left>0</left>
+	<right>10</right>
+</task>
