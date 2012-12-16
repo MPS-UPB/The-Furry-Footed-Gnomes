@@ -103,6 +103,15 @@ public class MainClass {
 
         // Validate an .xml against a schema (.xsd)
         // exemplification
+        
+        /*ReturnXSDs xsds=new ReturnXSDs(xsdPath);
+        
+        ArrayList<String> XSD=xsds.getXSDs();
+        
+        for(int i=0;i<XSD.size();i++){
+            
+        } */     
+        
         boolean isValid = XmlValidator.validateAgainstXSD(xmlPath + xmlName, xsdPath + xsdName);
         if (isValid) {
             System.out.println(".xml file is valid");
