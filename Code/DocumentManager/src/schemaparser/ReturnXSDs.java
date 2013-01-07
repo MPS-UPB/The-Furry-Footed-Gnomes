@@ -10,15 +10,9 @@ import java.util.ArrayList;
  * @author Vlad
  */
 public class ReturnXSDs {
-    ArrayList<String> XSDs;
-    String foldername;
-
-    public ReturnXSDs(String file){
-        XSDs=new ArrayList<>();
-        foldername=file;
-    }
     
-    public ArrayList<String> getXSDs(){
+    public static ArrayList<String> getXSDs(String foldername){
+    	ArrayList<String> XSDs = new ArrayList<String>();
         File folder = new File(foldername);
         File[] listOfFiles = folder.listFiles();
         for(int i=0;i<listOfFiles.length;i++){
