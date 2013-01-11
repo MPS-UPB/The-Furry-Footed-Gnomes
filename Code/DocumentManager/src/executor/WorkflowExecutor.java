@@ -1,23 +1,13 @@
 package executor;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.UUID;
+
 import schemaparser.*;
 
 public class WorkflowExecutor {
-	
-	// workflow input and output files
-	/* workflowInputFile = input file of the first executable task of the array;
-	 * 					 = input file for the entry point */
-	private String workflowInputFile;
-	/* workflowInputFile = output for of last executable task of the array;
-	 * 					 = output file for the exit point */
-	private String workflowOutputFile;
-	// NOTES:
-	// 1) now, every workflow has one input file and one output file; 
-	// if you want to process multiple images, the workflow should be executed sequential for every image
-	// ***modify this at your convenience
-	// 2) all the intermediary input and output files will be temporary and deleted afterwards
-	
+
     // output and error messages after the workflow executor finishes
     private String workflowOutput;
     private String workflowError;
@@ -31,17 +21,61 @@ public class WorkflowExecutor {
 		this.execTasks = execTasks;
 	}
 	
-	public void setInputFile(String inputFile) {
-		this.workflowInputFile = inputFile;
-	}
-	
-	public void setOutputFile(String outputFile) {
-		this.workflowOutputFile = outputFile;
-	}
-	
 	// methods which implements the logic for the workflow execution
-	public int execute() {
-		return 0;
+	public int execute(ArrayList<String> inputFiles, ArrayList<String> outputFiles) {
+		int returnValue = 0;
+		workflowError = "";
+		workflowOutput = "";
+		for (int i = 0; i < inputFiles.size(); ++i){
+			String entryPoint = inputFiles.get(i);
+			String endPoint = outputFiles.get(i);
+			String previousFile = null;
+			for (int stage = 0; stage < execTasks.size(); ++stage) {
+				String inputFile, outputFile;
+				if (stage == 0)
+					inputFile = entryPoint;
+				else 
+					inputFile = previousFile;
+				if (stage == execTasks.size() - 1) {
+					outputFile = endPoint;
+				}
+				else
+					// Create a new random file for this intermediate stage
+					outputFile = UUID.randomUUID().toString();
+				ExecutableTask task = execTasks.get(stage);
+				task.setInputFile(inputFile);
+				task.setOutputFile(outputFile);
+				TaskExecutor te = new TaskExecutor(task);
+				te.execute();
+				if (te.getExitVal() != 0) {
+					returnValue = -1;
+					workflowError += "Could not process " + entryPoint + ".";
+					workflowError += "Error at " + task.getExecInfo().getExecName() + ":";
+					workflowError += te.getTaskError();
+					workflowError += "\n";
+					if (!inputFile.equals(entryPoint)){
+						// Delete temporary file used in intermediate stage
+						File f = new File(inputFile);
+						f.delete();
+					}
+					if (!inputFile.equals(endPoint)){
+						// Delete temporary file used in intermediate stage
+						File f = new File(outputFile);
+						f.delete();
+					}
+					// This will quit from current file being processed, and continue to next set of 
+					break;
+				}
+				previousFile = outputFile;
+				if (!inputFile.equals(entryPoint)){
+					// Delete temporary file used in intermediate stage
+					File f = new File(inputFile);
+					f.delete();
+				}
+			}
+			workflowOutput += "Sucessfully worked " + entryPoint + " into " + endPoint + "\n";
+		}
+		return returnValue;
 	}
 	
 	public String getTaskOutput() {
