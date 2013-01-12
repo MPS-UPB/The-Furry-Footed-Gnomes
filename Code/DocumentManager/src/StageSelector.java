@@ -16,7 +16,7 @@ import javax.swing.JSeparator;
 public class StageSelector extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
-
+	private final GUI parent;
 	/**
 	 * Launch the application.
 	 */
@@ -33,7 +33,8 @@ public class StageSelector extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public StageSelector() {
+	public StageSelector(final GUI parent) {
+		this.parent = parent;
 		setTitle("Stage Selector");
 		setBounds(100, 100, 450, 257);
 		getContentPane().setLayout(new BorderLayout());
@@ -41,7 +42,7 @@ public class StageSelector extends JDialog {
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(null);
 		
-		JComboBox comboBox = new JComboBox();
+		final JComboBox comboBox = new JComboBox();
 		
 		comboBox.setBounds(35, 95, 158, 26);
 		comboBox.addItem("Preprocessing");
@@ -58,7 +59,7 @@ public class StageSelector extends JDialog {
 		lblStartingStage.setBounds(85, 58, 105, 26);
 		contentPanel.add(lblStartingStage);
 		
-		JComboBox comboBox_1 = new JComboBox();
+		final JComboBox comboBox_1 = new JComboBox();
 		comboBox_1.setBounds(244, 95, 158, 26);
 		comboBox_1.addItem("Preprocessing");
 		comboBox_1.addItem("Binarization");
@@ -89,6 +90,16 @@ public class StageSelector extends JDialog {
 			{
 				JButton okButton = new JButton("OK");
 				okButton.setActionCommand("OK");
+				okButton.addActionListener(new ActionListener(){
+
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						System.out.println("aaa");
+						parent.customizeWorkflow(comboBox.getSelectedItem().toString(), comboBox_1.getSelectedItem().toString());
+						dispose();
+					}
+					
+				});
 				buttonPane.add(okButton);
 				getRootPane().setDefaultButton(okButton);
 			}

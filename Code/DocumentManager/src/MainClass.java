@@ -5,7 +5,7 @@ public class MainClass {
 		// TODO Auto-generated method stub
 		try {
 			GUI frame = new GUI();
-			frame.setStageSelector(new StageSelector());
+			frame.setStageSelector(new StageSelector(frame));
 			frame.setSetup(new Setup(frame));
 			
 			frame.setVisible(true);
