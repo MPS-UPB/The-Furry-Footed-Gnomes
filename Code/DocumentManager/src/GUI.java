@@ -3,6 +3,7 @@ import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.util.ArrayList;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -86,6 +87,14 @@ public class GUI extends JFrame {
 		ArrayList<ArrayList<Object>> OCR=new ArrayList<ArrayList<Object>>();
 		ArrayList<ArrayList<Object>> Hierarchy=new ArrayList<ArrayList<Object>>();
 		ArrayList<ArrayList<Object>> PDFexporter=new ArrayList<ArrayList<Object>>();
+		ButtonGroup preprocessingGroup = new ButtonGroup();
+		ButtonGroup binarizationgGroup = new ButtonGroup();
+		ButtonGroup layoutGroup = new ButtonGroup();
+		ButtonGroup pagingGroup = new ButtonGroup();
+		ButtonGroup ocrGroup = new ButtonGroup();
+		ButtonGroup hierarchyGroup = new ButtonGroup();
+		ButtonGroup pdfexporterGroup = new ButtonGroup();
+
 		tasks.add("Preprocessing");
 		tasks.add("Binarization");
 		tasks.add("Layout");
@@ -106,6 +115,7 @@ public class GUI extends JFrame {
 			if(tasks.indexOf(start)==0 && (execInfo.get(i).getExecType().contains("preprocessing") || execInfo.get(i).getExecType().contains("support"))){
 				ArrayList<Object> aux=new ArrayList<Object>();
 				JRadioButton d=new JRadioButton(execInfo.get(i).getExecName());
+				preprocessingGroup.add(d);
 				aux.add(d);
 				for(int j=0;j<execTasks.get(i).getParams().size();j++){
 					aux.add(new JLabel(execTasks.get(i).getParams().get(j).getParamName()));
@@ -117,6 +127,7 @@ public class GUI extends JFrame {
 			if(tasks.indexOf(start)<=1 && tasks.indexOf(end)>=1 && execInfo.get(i).getExecType().contains("binarization")){
 				ArrayList<Object> aux=new ArrayList<Object>();
 				JRadioButton d=new JRadioButton(execInfo.get(i).getExecName());
+				binarizationgGroup.add(d);
 				aux.add(d);
 				for(int j=0;j<execTasks.get(i).getParams().size();j++){
 					aux.add(new JLabel(execTasks.get(i).getParams().get(j).getParamName()));
@@ -137,6 +148,7 @@ public class GUI extends JFrame {
 			if(tasks.indexOf(start)<=3 && tasks.indexOf(end)>=3 && execInfo.get(i).getExecType().contains("paging")){
 				ArrayList<Object> aux=new ArrayList<Object>();
 				JRadioButton d=new JRadioButton(execInfo.get(i).getExecName());
+				pagingGroup.add(d);
 				aux.add(d);
 				for(int j=0;j<execTasks.get(i).getParams().size();j++){
 					aux.add(new JLabel(execTasks.get(i).getParams().get(j).getParamName()));
@@ -147,6 +159,7 @@ public class GUI extends JFrame {
 			if(tasks.indexOf(start)<=4 && tasks.indexOf(end)>=4 && execInfo.get(i).getExecType().contains("ocr")){
 				ArrayList<Object> aux=new ArrayList<Object>();
 				JRadioButton d=new JRadioButton(execInfo.get(i).getExecName());
+				ocrGroup.add(d);
 				aux.add(d);
 				for(int j=0;j<execTasks.get(i).getParams().size();j++){
 					aux.add(new JLabel(execTasks.get(i).getParams().get(j).getParamName()));
@@ -157,6 +170,7 @@ public class GUI extends JFrame {
 			if(tasks.indexOf(start)<=5 && tasks.indexOf(end)>=5 && execInfo.get(i).getExecType().contains("hierarchy")){
 				ArrayList<Object> aux=new ArrayList<Object>();
 				JRadioButton d=new JRadioButton(execInfo.get(i).getExecName());
+				hierarchyGroup.add(d);
 				aux.add(d);
 				for(int j=0;j<execTasks.get(i).getParams().size();j++){
 					aux.add(new JLabel(execTasks.get(i).getParams().get(j).getParamName()));
@@ -167,6 +181,7 @@ public class GUI extends JFrame {
 			if(tasks.indexOf(end)==6 && execInfo.get(i).getExecType().contains("pdf-exporter")){
 				ArrayList<Object> aux=new ArrayList<Object>();
 				JRadioButton d=new JRadioButton(execInfo.get(i).getExecName());
+				pdfexporterGroup.add(d);
 				aux.add(d);
 				for(int j=0;j<execTasks.get(i).getParams().size();j++){
 					aux.add(new JLabel(execTasks.get(i).getParams().get(j).getParamName()));
