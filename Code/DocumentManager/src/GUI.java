@@ -379,10 +379,12 @@ public class GUI extends JFrame {
 		ArrayList<String> XSDs = ReturnXSDs.getXSDs(schemaDir);
 		
 		for (String xsd : XSDs) {
-			System.out.println(schemaDir + xsd);
+			System.out.println(schemaDir + "\\" + xsd);
 			SchemaParser schemaParser = new SchemaParser(schemaDir + "\\" +xsd);
 
 	        schemaParser.parse();
+	        ExecutableTask task = schemaParser.getResult();
+	        task.setExecDir(exeDir);
 	        execTasks.add(schemaParser.getResult());
 	        
 	        System.out.println(schemaParser.getResult().toXMLString());

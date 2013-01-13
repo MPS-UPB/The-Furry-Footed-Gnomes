@@ -64,8 +64,8 @@ public class Setup extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public Setup(final GUI parent) {
-		this.parent = parent;
+	public Setup(GUI parentFrame) {
+		this.parent = parentFrame;
 		this.enable_button = 0;
 		setBackground(SystemColor.activeCaptionBorder);
 		setTitle("Path Setter");

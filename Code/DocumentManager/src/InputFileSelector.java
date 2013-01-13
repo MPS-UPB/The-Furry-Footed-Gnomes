@@ -123,13 +123,12 @@ public class InputFileSelector extends JDialog {
 		ArrayList<String> filesInput = new ArrayList<>();
 		filesInput.add(textField.getText());
 		ArrayList<String> filesOutput = new ArrayList<>();
-		
 		File f = new File(textField.getText());
 		filesOutput.add(outputDir + "\\" + "res_" + f.getName());
 		
-		//we.execute(filesInpout, filesOutput);
+		we.execute(filesInput, filesOutput);
 		
-		//dispose();
+		dispose();
 
 	}
 }

@@ -10,6 +10,7 @@ public class TaskExecutor {
     private String taskOutput;
     private String taskError;
     private int exitVal;
+   
 
     /**
      * Constructor.
@@ -35,9 +36,19 @@ public class TaskExecutor {
         try {
             // Get the runtime environment
             Runtime runtime = Runtime.getRuntime();
+            File inputXML = File.createTempFile("input", ".xml");
+            FileWriter fw = new FileWriter(inputXML);
+            fw.write(execTask.toXMLString());
+            fw.close();
             // Execute the task
             System.out.println("Executing " + execTask.getExecInfo().getExecName());
-            Process process = runtime.exec(execTask.getExecInfo().getExecName());
+            String []cmdArray = new String[2];
+            
+            cmdArray[0] = execTask.getExecDir() + "\\" + execTask.getExecInfo().getExecName();
+            cmdArray[1] = inputXML.getAbsolutePath();
+            System.out.println(inputXML.getAbsolutePath());
+            System.out.println(execTask.getExecInfo().getExecName());
+            Process process = runtime.exec(cmdArray);
 
             BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
             BufferedReader err = new BufferedReader(new InputStreamReader(process.getErrorStream()));

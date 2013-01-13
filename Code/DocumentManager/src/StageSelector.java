@@ -33,8 +33,8 @@ public class StageSelector extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public StageSelector(final GUI parent) {
-		this.parent = parent;
+	public StageSelector(GUI parentFrame) {
+		this.parent = parentFrame;
 		setTitle("Stage Selector");
 		setBounds(100, 100, 450, 257);
 		getContentPane().setLayout(new BorderLayout());

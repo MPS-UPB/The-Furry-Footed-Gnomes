@@ -17,6 +17,7 @@ public class ExecutableTask {
     private String inputFile = null;
     private String outputFile = null;
     private ArrayList<ExecutableParameter> execParams;
+    private String execDir;
 
     /**
      * Constructor.
@@ -32,6 +33,23 @@ public class ExecutableTask {
      */
     public void setExecInfo(ExecutableInfo info) {
         execInfo = info;
+    }
+    /**
+     * Sets the executable's directory path.
+     *
+     * @param execDir The executable's directory path.
+     */
+    public void setExecDir(String execDir) {
+    	this.execDir = execDir;
+    }
+
+    /**
+     * Gets the executable's directory path.
+     *
+     * @return	The executable's directory path.
+     */    
+    public String getExecDir() {
+    	return this.execDir;
     }
 
     /**
