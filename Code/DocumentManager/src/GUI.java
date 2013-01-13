@@ -1,14 +1,23 @@
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.ButtonGroup;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+
+import executor.WorkflowExecutor;
 
 import schemaparser.ExecutableInfo;
 import schemaparser.ExecutableTask;
@@ -72,7 +81,59 @@ public class GUI extends JFrame {
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		setBounds(0,0,screenSize.width, screenSize.height-40);
 
-
+		JMenuBar menuBar = new JMenuBar();
+		setJMenuBar(menuBar);
+		
+		JMenu mnExecute = new JMenu("Execute");
+		menuBar.add(mnExecute);
+		
+		JMenuItem mntmStart = new JMenuItem("Start");
+		mnExecute.add(mntmStart);
+		
+		mntmStart.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				ArrayList<ExecutableTask> tasksToProcess = new ArrayList<ExecutableTask>();
+				
+				JRadioButton btn = (JRadioButton)mainWindow.getComponent(9);
+				if (btn.isSelected()) {
+					ExecutableTask et = getExeByName(btn.getText());
+					for (int i=11; i<=17; i+=2) {
+						JTextField text = (JTextField)mainWindow.getComponent(i);
+						et.setSingleParam(((JLabel)mainWindow.getComponent(i-1)).getText(), text.getText());
+					}					
+					tasksToProcess.add(et);
+				}
+				
+				else if (((JRadioButton)mainWindow.getComponent(18)).isSelected()) {
+					ExecutableTask et = getExeByName(((JRadioButton)mainWindow.getComponent(18)).getText());
+					et.setSingleParam(((JLabel)mainWindow.getComponent(19)).getText(), ((JTextField)mainWindow.getComponent(20)).getText());
+					tasksToProcess.add(et);
+				}
+				
+				if (((JRadioButton)mainWindow.getComponent(36)).isSelected()) {
+					ExecutableTask et = getExeByName(((JRadioButton)mainWindow.getComponent(36)).getText());
+					
+					tasksToProcess.add(et);					
+				}
+				
+				
+				InputFileSelector ifs = new InputFileSelector(tasksToProcess, outDir);
+				ifs.setVisible(true);				
+			}
+			
+		});
+		mnExecute.add(mntmStart);
+	}
+	
+	
+	// Gets ExecutableTask by name
+	private ExecutableTask getExeByName (String exeName) {
+		for (ExecutableTask et : execTasks) {
+			if (exeName.compareTo(et.getExecInfo().getExecName()) == 0)
+				return et;
+		}
+		return null;
 	}
 	
 	void customizeWorkflow(String start, String end) {
@@ -202,6 +263,7 @@ public class GUI extends JFrame {
 		setContentPane(mainWindow);
 		int y = 0;
 		for(int i = tasks.indexOf(start); i <= tasks.indexOf(end); i++){
+			// seteaza titlul sectiune (ex: Preprocesare)
 			mainWindow.add(new JLabel(tasks.get(i)));
 			for(int j = 0; j < 2 * max; j++){
 				mainWindow.add(new JLabel());
@@ -209,8 +271,10 @@ public class GUI extends JFrame {
 			switch(i){
 				case 0:
 					for(int j = 0; j < Preprocessing.size(); j++){
+						// Radio BUtton cu Text
 						mainWindow.add((JRadioButton) Preprocessing.get(j).get(0));
 						for(int k = 1; k < Preprocessing.get(j).size(); k++){
+							// Adauga parametrii
 							mainWindow.add((JLabel) Preprocessing.get(j).get(k));
 							mainWindow.add((JTextField) Preprocessing.get(j).get(k+1));
 							k++;
@@ -301,7 +365,10 @@ public class GUI extends JFrame {
 			}
 		}
 		//mainWindow.add(new JLabel("aedsfvca"));
-		System.out.println(mainWindow.toString());
+/*		JButton btn_execute = new JButton();
+		btn_execute.setText("Execute");
+		mainWindow.add(btn_execute);
+*/		System.out.println(mainWindow.toString());
 		setVisible(true);
 		//mainWindow=new JPanel();setContentPane(mainWindow);
 		
