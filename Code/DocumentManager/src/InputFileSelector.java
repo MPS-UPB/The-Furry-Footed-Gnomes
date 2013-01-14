@@ -75,8 +75,6 @@ public class InputFileSelector extends JDialog {
 				if (browser.showDialog(InputFileSelector.this, "Select File") == 0) {
 					textField.setText(browser.getSelectedFile().toString());
 					okButton.setEnabled(true);
-					
-					startExecution();
 				}
 			}
 		});
@@ -98,10 +96,16 @@ public class InputFileSelector extends JDialog {
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
 				okButton = new JButton("OK");
+				okButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent arg0) {
+						startExecution();
+					}
+				});
 				okButton.setActionCommand("OK");
 				okButton.setEnabled(false);
 				buttonPane.add(okButton);
 				getRootPane().setDefaultButton(okButton);
+				
 			}
 			{
 				JButton cancelButton = new JButton("Cancel");
