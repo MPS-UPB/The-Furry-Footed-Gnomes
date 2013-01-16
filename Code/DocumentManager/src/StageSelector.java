@@ -1,118 +1,142 @@
+
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JComboBox;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.JLabel;
 import java.awt.Font;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JSeparator;
-
+import javax.swing.border.EmptyBorder;
 
 public class StageSelector extends JDialog {
 
-	private final JPanel contentPanel = new JPanel();
-	private final GUI parent;
-	/**
-	 * Launch the application.
-	 */
-	/*public static void main(String[] args) {
-		try {
-			StageSelector dialog = new StageSelector();
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}*/
+    private final GUI parent;
+    private final JPanel contentPanel;
+    private final JComboBox startStageComboBox;
+    private final JComboBox endStageComboBox;
+    private final static String[] stages = {
+        "Preprocessing",
+        "Binarization",
+        "Layout",
+        "Paging",
+        "OCR",
+        "Hierarchy",
+        "PDF Exporter"
+    };
 
-	/**
-	 * Create the dialog.
-	 */
-	public StageSelector(GUI parentFrame) {
-		this.parent = parentFrame;
-		setTitle("Stage Selector");
-		setBounds(100, 100, 450, 257);
-		getContentPane().setLayout(new BorderLayout());
-		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-		getContentPane().add(contentPanel, BorderLayout.CENTER);
-		contentPanel.setLayout(null);
-		
-		final JComboBox comboBox = new JComboBox();
-		
-		comboBox.setBounds(35, 95, 158, 26);
-		comboBox.addItem("Preprocessing");
-		comboBox.addItem("Binarization");
-		comboBox.addItem("Layout");
-		comboBox.addItem("Paging");
-		comboBox.addItem("OCR");
-		comboBox.addItem("Hierarchy");
-		comboBox.addItem("PDF-exporter");
-		contentPanel.add(comboBox);
-		
-		JLabel lblStartingStage = new JLabel("Start stage");
-		lblStartingStage.setFont(new Font("Georgia", Font.PLAIN, 14));
-		lblStartingStage.setBounds(85, 58, 105, 26);
-		contentPanel.add(lblStartingStage);
-		
-		final JComboBox comboBox_1 = new JComboBox();
-		comboBox_1.setBounds(244, 95, 158, 26);
-		comboBox_1.addItem("Preprocessing");
-		comboBox_1.addItem("Binarization");
-		comboBox_1.addItem("Layout");
-		comboBox_1.addItem("Paging");
-		comboBox_1.addItem("OCR");
-		comboBox_1.addItem("Hierarchy");
-		comboBox_1.addItem("PDF-exporter");
+    /**
+     * Create the dialog.
+     */
+    public StageSelector(GUI parentFrame) {
 
-		contentPanel.add(comboBox_1);
-		
-		JLabel lblEndStage = new JLabel("End Stage");
-		lblEndStage.setFont(new Font("Georgia", Font.PLAIN, 14));
-		lblEndStage.setBounds(290, 58, 134, 26);
-		contentPanel.add(lblEndStage);
-		
-		JSeparator separator = new JSeparator();
-		separator.setBounds(35, 79, 158, 9);
-		contentPanel.add(separator);
-		
-		JSeparator separator_1 = new JSeparator();
-		separator_1.setBounds(244, 79, 158, 9);
-		contentPanel.add(separator_1);
-		{
-			JPanel buttonPane = new JPanel();
-			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
-			getContentPane().add(buttonPane, BorderLayout.SOUTH);
-			{
-				JButton okButton = new JButton("OK");
-				okButton.setActionCommand("OK");
-				okButton.addActionListener(new ActionListener(){
+        parent = parentFrame;
 
-					@Override
-					public void actionPerformed(ActionEvent arg0) {
-						System.out.println("aaa");
-						parent.customizeWorkflow(comboBox.getSelectedItem().toString(), comboBox_1.getSelectedItem().toString());
-						dispose();
-					}
-					
-				});
-				buttonPane.add(okButton);
-				getRootPane().setDefaultButton(okButton);
-			}
-			{
-				JButton cancelButton = new JButton("Cancel");
-				cancelButton.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent arg0) {
-						dispose();
-					}
-				});
-				cancelButton.setActionCommand("Cancel");
-				buttonPane.add(cancelButton);
-			}
-		}
-	}
+        setTitle("Stage Selector");
+        setBounds(100, 100, 450, 257);
+        setLocation(400, 250);
+        getContentPane().setLayout(new BorderLayout());
+
+        contentPanel = new JPanel();
+        contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+        contentPanel.setLayout(null);
+
+        getContentPane().add(contentPanel, BorderLayout.CENTER);
+
+        // Start stage.
+        JLabel startStageLabel = new JLabel("Start stage");
+        startStageLabel.setFont(new Font("Georgia", Font.PLAIN, 14));
+        startStageLabel.setBounds(85, 58, 105, 26);
+        contentPanel.add(startStageLabel);
+
+        startStageComboBox = new JComboBox();
+        startStageComboBox.setBounds(35, 95, 158, 26);
+        for (int i = 0; i < stages.length; i++) {
+            startStageComboBox.addItem(stages[i]);
+        }
+        contentPanel.add(startStageComboBox);
+
+        // End stage.
+        JLabel endStageLabel = new JLabel("End Stage");
+        endStageLabel.setFont(new Font("Georgia", Font.PLAIN, 14));
+        endStageLabel.setBounds(290, 58, 134, 26);
+        contentPanel.add(endStageLabel);
+
+        endStageComboBox = new JComboBox();
+        endStageComboBox.setBounds(244, 95, 158, 26);
+        for (int i = 0; i < stages.length; i++) {
+            endStageComboBox.addItem(stages[i]);
+        }
+        contentPanel.add(endStageComboBox);
+
+
+        startStageComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                
+                Object selectedStartItem = startStageComboBox.getSelectedItem();
+                
+                if (selectedStartItem != null) {
+                    String selectedStartStage = selectedStartItem.toString();
+                    
+                    int k = 0;
+                    while (!selectedStartStage.equals(stages[k])) {
+                        k++;
+                    }
+                    
+                    endStageComboBox.removeAllItems();
+                    while (k < stages.length) {
+                        endStageComboBox.addItem(stages[k++]);
+                    }
+                }
+            }
+        });
+
+
+        // Some separators for good measure.
+        JSeparator separator1 = new JSeparator();
+        separator1.setBounds(35, 79, 158, 9);
+        contentPanel.add(separator1);
+
+        JSeparator separator2 = new JSeparator();
+        separator2.setBounds(244, 79, 158, 9);
+        contentPanel.add(separator2);
+
+
+        // Buttons.
+        JPanel buttonPane = new JPanel();
+        buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        getContentPane().add(buttonPane, BorderLayout.SOUTH);
+
+        // OK button.
+        JButton acceptButton = new JButton("OK");
+        acceptButton.setActionCommand("Accept");
+        acceptButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                parent.customizeWorkflow(
+                        startStageComboBox.getSelectedItem().toString(),
+                        endStageComboBox.getSelectedItem().toString());
+                dispose();
+            }
+        });
+        buttonPane.add(acceptButton);
+
+        // Cancel button.
+        JButton cancelButton = new JButton("Cancel");
+        cancelButton.setActionCommand("Cancel");
+        cancelButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
+        });
+        buttonPane.add(cancelButton);
+
+        getRootPane().setDefaultButton(acceptButton);
+    }
 }
