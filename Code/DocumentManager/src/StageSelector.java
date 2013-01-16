@@ -2,7 +2,6 @@
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
@@ -19,7 +18,7 @@ public class StageSelector extends JDialog {
     private final JPanel contentPanel;
     private final JComboBox startStageComboBox;
     private final JComboBox endStageComboBox;
-    private final static String[] stages = {
+    public final static String[] stages = {
         "Preprocessing",
         "Binarization",
         "Layout",

@@ -1,6 +1,9 @@
 
 import java.awt.Dimension;
-import java.awt.GridLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.ScrollPane;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,7 +19,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import schemaparser.ExecutableInfo;
 import schemaparser.ExecutableTask;
-import schemaparser.ReturnXSDs;
+import schemaparser.FileCounter;
 import schemaparser.SchemaParser;
 
 public class GUI extends JFrame {
@@ -33,15 +36,15 @@ public class GUI extends JFrame {
     public void setExecutablesDir(String name) {
         executablesDir = name;
     }
-    
-    public String getExecutablesDir () {
+
+    public String getExecutablesDir() {
         return executablesDir;
     }
 
     public void setSchemasDir(String name) {
         schemasDir = name;
     }
-    
+
     public String getSchemasDir() {
         return schemasDir;
     }
@@ -49,7 +52,7 @@ public class GUI extends JFrame {
     public void setOutputDir(String name) {
         outputDir = name;
     }
-    
+
     public String getOutputDir() {
         return outputDir;
     }
@@ -130,18 +133,20 @@ public class GUI extends JFrame {
     // Gets ExecutableTask by name
     private ExecutableTask getExeByName(String exeName) {
         for (ExecutableTask et : execTasks) {
-            if (exeName.compareTo(et.getExecInfo().getExecName()) == 0) {
+            if (exeName.equals(et.getExecInfo().getExecName())) {
                 return et;
             }
         }
         return null;
     }
 
-    void customizeWorkflow(String start, String end) {
+    void customizeWorkflow(String startStage, String endStage) {
 
         execTasks = new ArrayList<>();
         execInfo = new ArrayList<>();
+
         ArrayList<String> tasks = new ArrayList<>();
+
         ArrayList<ArrayList<Object>> Preprocessing = new ArrayList<>();
         ArrayList<ArrayList<Object>> Binarization = new ArrayList<>();
         ArrayList<ArrayList<Object>> Layout = new ArrayList<>();
@@ -149,6 +154,7 @@ public class GUI extends JFrame {
         ArrayList<ArrayList<Object>> OCR = new ArrayList<>();
         ArrayList<ArrayList<Object>> Hierarchy = new ArrayList<>();
         ArrayList<ArrayList<Object>> PDFexporter = new ArrayList<>();
+
         ButtonGroup preprocessingGroup = new ButtonGroup();
         ButtonGroup binarizationgGroup = new ButtonGroup();
         ButtonGroup layoutGroup = new ButtonGroup();
@@ -157,245 +163,321 @@ public class GUI extends JFrame {
         ButtonGroup hierarchyGroup = new ButtonGroup();
         ButtonGroup pdfexporterGroup = new ButtonGroup();
 
-        tasks.add("Preprocessing");
-        tasks.add("Binarization");
-        tasks.add("Layout");
-        tasks.add("Paging");
-        tasks.add("OCR");
-        tasks.add("Hierarchy");
-        tasks.add("PDF-exporter");
-        int rows = tasks.indexOf(end) - tasks.indexOf(start) + 1;
         populateTasks();
-        int max = 0;
-        for (int i = 0; i < execTasks.size(); i++) {
-            execInfo.add(execTasks.get(i).getExecInfo());
+       
+        {
+            tasks.add("Preprocessing");
+            tasks.add("Binarization");
+            tasks.add("Layout");
+            tasks.add("Paging");
+            tasks.add("OCR");
+            tasks.add("Hierarchy");
+            tasks.add("PDF Exporter");
 
-            if (execTasks.get(i).getParams().size() > max) {
-                max = execTasks.get(i).getParams().size();
+            int rows = tasks.indexOf(endStage) - tasks.indexOf(startStage) + 1;
+
+            for (int i = 0; i < execTasks.size(); i++) {
+                execInfo.add(execTasks.get(i).getExecInfo());
+
+                if (tasks.indexOf(startStage) == 0 && (execInfo.get(i).getExecType().contains("preprocessing") || execInfo.get(i).getExecType().contains("support"))) {
+                    ArrayList<Object> aux = new ArrayList<>();
+                    JRadioButton d = new JRadioButton(execInfo.get(i).getExecName());
+                    preprocessingGroup.add(d);
+                    aux.add(d);
+                    for (int j = 0; j < execTasks.get(i).getParams().size(); j++) {
+                        aux.add(new JLabel(execTasks.get(i).getParams().get(j).getParamName()));
+                        aux.add(new JTextField());
+                    }
+                    rows++;
+                    Preprocessing.add(aux);
+                }
+                if (tasks.indexOf(startStage) <= 1 && tasks.indexOf(endStage) >= 1 && execInfo.get(i).getExecType().contains("binarization")) {
+                    ArrayList<Object> aux = new ArrayList<>();
+                    JRadioButton d = new JRadioButton(execInfo.get(i).getExecName());
+                    binarizationgGroup.add(d);
+                    aux.add(d);
+                    for (int j = 0; j < execTasks.get(i).getParams().size(); j++) {
+                        aux.add(new JLabel(execTasks.get(i).getParams().get(j).getParamName()));
+                        aux.add(new JTextField());
+                    }
+                    Binarization.add(aux);
+                    rows++;
+                }
+                if (tasks.indexOf(startStage) <= 2 && tasks.indexOf(endStage) >= 2 && execInfo.get(i).getExecType().contains("layout")) {
+                    ArrayList<Object> aux = new ArrayList<>();
+                    JRadioButton d = new JRadioButton(execInfo.get(i).getExecName());
+                    aux.add(d);
+                    for (int j = 0; j < execTasks.get(i).getParams().size(); j++) {
+                        aux.add(new JLabel(execTasks.get(i).getParams().get(j).getParamName()));
+                        aux.add(new JTextField());
+                    }
+                    Layout.add(aux);
+                    rows++;
+                }
+                if (tasks.indexOf(startStage) <= 3 && tasks.indexOf(endStage) >= 3 && execInfo.get(i).getExecType().contains("paging")) {
+                    ArrayList<Object> aux = new ArrayList<>();
+                    JRadioButton d = new JRadioButton(execInfo.get(i).getExecName());
+                    pagingGroup.add(d);
+                    aux.add(d);
+                    for (int j = 0; j < execTasks.get(i).getParams().size(); j++) {
+                        aux.add(new JLabel(execTasks.get(i).getParams().get(j).getParamName()));
+                        aux.add(new JTextField());
+                    }
+                    Paging.add(aux);
+                    rows++;
+                }
+                if (tasks.indexOf(startStage) <= 4 && tasks.indexOf(endStage) >= 4 && execInfo.get(i).getExecType().contains("ocr")) {
+                    ArrayList<Object> aux = new ArrayList<>();
+                    JRadioButton d = new JRadioButton(execInfo.get(i).getExecName());
+                    ocrGroup.add(d);
+                    aux.add(d);
+                    for (int j = 0; j < execTasks.get(i).getParams().size(); j++) {
+                        aux.add(new JLabel(execTasks.get(i).getParams().get(j).getParamName()));
+                        aux.add(new JTextField());
+                    }
+                    OCR.add(aux);
+                    rows++;
+                }
+                if (tasks.indexOf(startStage) <= 5 && tasks.indexOf(endStage) >= 5 && execInfo.get(i).getExecType().contains("hierarchy")) {
+                    ArrayList<Object> aux = new ArrayList<>();
+                    JRadioButton d = new JRadioButton(execInfo.get(i).getExecName());
+                    hierarchyGroup.add(d);
+                    aux.add(d);
+                    for (int j = 0; j < execTasks.get(i).getParams().size(); j++) {
+                        aux.add(new JLabel(execTasks.get(i).getParams().get(j).getParamName()));
+                        aux.add(new JTextField());
+                    }
+                    Hierarchy.add(aux);
+                    rows++;
+                }
+                if (tasks.indexOf(endStage) == 6 && execInfo.get(i).getExecType().contains("pdf-exporter")) {
+                    ArrayList<Object> aux = new ArrayList<>();
+                    JRadioButton d = new JRadioButton(execInfo.get(i).getExecName());
+                    pdfexporterGroup.add(d);
+                    aux.add(d);
+                    for (int j = 0; j < execTasks.get(i).getParams().size(); j++) {
+                        aux.add(new JLabel(execTasks.get(i).getParams().get(j).getParamName()));
+                        aux.add(new JTextField());
+                    }
+                    PDFexporter.add(aux);
+                    rows++;
+                }
+
+
             }
 
-            if (tasks.indexOf(start) == 0 && (execInfo.get(i).getExecType().contains("preprocessing") || execInfo.get(i).getExecType().contains("support"))) {
-                ArrayList<Object> aux = new ArrayList<>();
-                JRadioButton d = new JRadioButton(execInfo.get(i).getExecName());
-                preprocessingGroup.add(d);
-                aux.add(d);
-                for (int j = 0; j < execTasks.get(i).getParams().size(); j++) {
-                    aux.add(new JLabel(execTasks.get(i).getParams().get(j).getParamName()));
-                    aux.add(new JTextField());
+            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+            setBounds(0, 0, screenSize.width, screenSize.height - 40);            
+            
+            mainWindow = new JPanel();
+            GridBagLayout gridBag = new GridBagLayout();
+            mainWindow.setLayout(gridBag);
+            
+            ScrollPane scrollPane = new ScrollPane();
+            scrollPane.add(mainWindow);
+            
+            setContentPane(scrollPane);
+            
+            GridBagConstraints bagConstraints = new GridBagConstraints();
+            bagConstraints.anchor = GridBagConstraints.LINE_START;
+            bagConstraints.ipadx = 40;
+            bagConstraints.insets = new Insets(5, 10, 5, 0);
+            
+            int currentColumn = 0;
+            int currentRow = 0;
+            
+            for (int i = tasks.indexOf(startStage); i <= tasks.indexOf(endStage); i++) {
+                // seteaza titlul sectiune (ex: Preprocesare)
+                JLabel stageLabel = new JLabel(tasks.get(i));
+                bagConstraints.gridy = currentRow++;
+                bagConstraints.gridx = currentColumn;
+                bagConstraints.insets = new Insets(30, 10, 5, 0);
+                mainWindow.add(stageLabel, bagConstraints);
+                
+                bagConstraints.insets = new Insets(5, 10, 5, 0);
+                
+                switch (i) {
+                    case 0:
+                        for (int j = 0; j < Preprocessing.size(); j++) {
+                            // Radio BUtton cu Text
+                            JRadioButton radioButton = (JRadioButton) Preprocessing.get(j).get(0);
+                            bagConstraints.gridy = currentRow;
+                            bagConstraints.gridx = currentColumn++;
+                            mainWindow.add(radioButton, bagConstraints);
+                            
+                            for (int k = 1; k < Preprocessing.get(j).size(); k++) {
+                                // Adauga parametrii
+                                JLabel label = (JLabel) Preprocessing.get(j).get(k);
+                                bagConstraints.gridx = currentColumn++;
+                                mainWindow.add(label, bagConstraints);
+                                
+                                JTextField textField = (JTextField) Preprocessing.get(j).get(k + 1);
+                                bagConstraints.gridx = currentColumn++;
+                                mainWindow.add(textField, bagConstraints);
+                                k++;
+                            }
+                            currentColumn = 0;
+                            currentRow++;
+                        }
+                        break;
+                    case 1:
+                        for (int j = 0; j < Binarization.size(); j++) {
+                            
+                            JRadioButton radioButton = (JRadioButton) Binarization.get(j).get(0);
+                            bagConstraints.gridy = currentRow;
+                            bagConstraints.gridx = currentColumn++;
+                            mainWindow.add(radioButton, bagConstraints);
+                            
+                            for (int k = 1; k < Binarization.get(j).size(); k++) {
+                                
+                                JLabel label = (JLabel) Binarization.get(j).get(k);
+                                bagConstraints.gridx = currentColumn++;
+                                mainWindow.add(label, bagConstraints);
+                                
+                                JTextField textField = (JTextField) Binarization.get(j).get(k + 1);
+                                bagConstraints.gridx = currentColumn++;
+                                mainWindow.add(textField, bagConstraints);
+                                k++;
+                            }
+                            currentColumn = 0;
+                            currentRow++;
+                        }
+                        break;
+                    case 2:
+                        for (int j = 0; j < Layout.size(); j++) {
+                            
+                            JRadioButton radioButton = (JRadioButton) Layout.get(j).get(0);
+                            bagConstraints.gridy = currentRow;
+                            bagConstraints.gridx = currentColumn++;
+                            mainWindow.add(radioButton, bagConstraints);
+                            
+                            for (int k = 1; k < Layout.get(j).size(); k++) {
+                                
+                                JLabel label = (JLabel) Layout.get(j).get(k);
+                                bagConstraints.gridx = currentColumn++;
+                                mainWindow.add(label, bagConstraints);
+                                
+                                JTextField textField = (JTextField) Layout.get(j).get(k + 1);
+                                bagConstraints.gridx = currentColumn++;
+                                mainWindow.add(textField, bagConstraints);
+                                k++;
+                            }
+                            currentColumn = 0;
+                            currentRow++;
+                        }
+                        break;
+                    case 3:
+                        for (int j = 0; j < Paging.size(); j++) {
+                            
+                            JRadioButton radioButton = (JRadioButton) Paging.get(j).get(0);
+                            bagConstraints.gridy = currentRow;
+                            bagConstraints.gridx = currentColumn++;
+                            mainWindow.add(radioButton, bagConstraints);
+                            
+                            for (int k = 1; k < Paging.get(j).size(); k++) {
+                                
+                                JLabel label = (JLabel) Paging.get(j).get(k);
+                                bagConstraints.gridx = currentColumn++;
+                                mainWindow.add(label, bagConstraints);
+                                
+                                JTextField textField = (JTextField) Paging.get(j).get(k + 1);
+                                bagConstraints.gridx = currentColumn++;
+                                mainWindow.add(textField, bagConstraints);
+                                k++;
+                            }
+                            currentColumn = 0;
+                            currentRow++;
+                        }
+                        break;
+                    case 4:
+                        for (int j = 0; j < OCR.size(); j++) {
+                            
+                            JRadioButton radioButton = (JRadioButton) OCR.get(j).get(0);
+                            bagConstraints.gridy = currentRow;
+                            bagConstraints.gridx = currentColumn++;
+                            mainWindow.add(radioButton, bagConstraints);
+                            
+                            for (int k = 1; k < OCR.get(j).size(); k++) {
+                                
+                                JLabel label = (JLabel) OCR.get(j).get(k);
+                                bagConstraints.gridx = currentColumn++;
+                                mainWindow.add(label, bagConstraints);
+                                
+                                JTextField textField = (JTextField) OCR.get(j).get(k + 1);
+                                bagConstraints.gridx = currentColumn++;
+                                mainWindow.add(textField, bagConstraints);
+                                k++;
+                            }
+                            currentColumn = 0;
+                            currentRow++;
+                        }
+                        break;
+                    case 5:
+                        for (int j = 0; j < Hierarchy.size(); j++) {
+                            
+                            JRadioButton radioButton = (JRadioButton) Hierarchy.get(j).get(0);
+                            bagConstraints.gridy = currentRow;
+                            bagConstraints.gridx = currentColumn++;
+                            mainWindow.add(radioButton, bagConstraints);
+                            
+                            for (int k = 1; k < Hierarchy.get(j).size(); k++) {
+                                
+                                JLabel label = (JLabel) Hierarchy.get(j).get(k);
+                                bagConstraints.gridx = currentColumn++;
+                                mainWindow.add(label, bagConstraints);
+                                
+                                JTextField textField = (JTextField) Hierarchy.get(j).get(k + 1);
+                                bagConstraints.gridx = currentColumn++;
+                                mainWindow.add(textField, bagConstraints);
+                                k++;
+                            }
+                            currentColumn = 0;
+                            currentRow++;
+                        }
+                        break;
+                    case 6:
+                        for (int j = 0; j < PDFexporter.size(); j++) {
+                            
+                            JRadioButton radioButton = (JRadioButton) PDFexporter.get(j).get(0);
+                            bagConstraints.gridy = currentRow;
+                            bagConstraints.gridx = currentColumn++;
+                            mainWindow.add(radioButton, bagConstraints);
+                            
+                            for (int k = 1; k < PDFexporter.get(j).size(); k++) {
+                                
+                                JLabel label = (JLabel) PDFexporter.get(j).get(k);
+                                bagConstraints.gridx = currentColumn++;
+                                mainWindow.add(label, bagConstraints);
+                                
+                                JTextField textField = (JTextField) PDFexporter.get(j).get(k + 1);
+                                bagConstraints.gridx = currentColumn++;
+                                mainWindow.add(textField, bagConstraints);
+                                k++;
+                            }
+                            currentColumn = 0;
+                            currentRow++;
+                        }
+                        break;
                 }
-                rows++;
-                Preprocessing.add(aux);
             }
-            if (tasks.indexOf(start) <= 1 && tasks.indexOf(end) >= 1 && execInfo.get(i).getExecType().contains("binarization")) {
-                ArrayList<Object> aux = new ArrayList<>();
-                JRadioButton d = new JRadioButton(execInfo.get(i).getExecName());
-                binarizationgGroup.add(d);
-                aux.add(d);
-                for (int j = 0; j < execTasks.get(i).getParams().size(); j++) {
-                    aux.add(new JLabel(execTasks.get(i).getParams().get(j).getParamName()));
-                    aux.add(new JTextField());
-                }
-                Binarization.add(aux);
-                rows++;
-            }
-            if (tasks.indexOf(start) <= 2 && tasks.indexOf(end) >= 2 && execInfo.get(i).getExecType().contains("layout")) {
-                ArrayList<Object> aux = new ArrayList<>();
-                JRadioButton d = new JRadioButton(execInfo.get(i).getExecName());
-                aux.add(d);
-                for (int j = 0; j < execTasks.get(i).getParams().size(); j++) {
-                    aux.add(new JLabel(execTasks.get(i).getParams().get(j).getParamName()));
-                    aux.add(new JTextField());
-                }
-                Layout.add(aux);
-                rows++;
-            }
-            if (tasks.indexOf(start) <= 3 && tasks.indexOf(end) >= 3 && execInfo.get(i).getExecType().contains("paging")) {
-                ArrayList<Object> aux = new ArrayList<>();
-                JRadioButton d = new JRadioButton(execInfo.get(i).getExecName());
-                pagingGroup.add(d);
-                aux.add(d);
-                for (int j = 0; j < execTasks.get(i).getParams().size(); j++) {
-                    aux.add(new JLabel(execTasks.get(i).getParams().get(j).getParamName()));
-                    aux.add(new JTextField());
-                }
-                Paging.add(aux);
-                rows++;
-            }
-            if (tasks.indexOf(start) <= 4 && tasks.indexOf(end) >= 4 && execInfo.get(i).getExecType().contains("ocr")) {
-                ArrayList<Object> aux = new ArrayList<>();
-                JRadioButton d = new JRadioButton(execInfo.get(i).getExecName());
-                ocrGroup.add(d);
-                aux.add(d);
-                for (int j = 0; j < execTasks.get(i).getParams().size(); j++) {
-                    aux.add(new JLabel(execTasks.get(i).getParams().get(j).getParamName()));
-                    aux.add(new JTextField());
-                }
-                OCR.add(aux);
-                rows++;
-            }
-            if (tasks.indexOf(start) <= 5 && tasks.indexOf(end) >= 5 && execInfo.get(i).getExecType().contains("hierarchy")) {
-                ArrayList<Object> aux = new ArrayList<>();
-                JRadioButton d = new JRadioButton(execInfo.get(i).getExecName());
-                hierarchyGroup.add(d);
-                aux.add(d);
-                for (int j = 0; j < execTasks.get(i).getParams().size(); j++) {
-                    aux.add(new JLabel(execTasks.get(i).getParams().get(j).getParamName()));
-                    aux.add(new JTextField());
-                }
-                Hierarchy.add(aux);
-                rows++;
-            }
-            if (tasks.indexOf(end) == 6 && execInfo.get(i).getExecType().contains("pdf-exporter")) {
-                ArrayList<Object> aux = new ArrayList<>();
-                JRadioButton d = new JRadioButton(execInfo.get(i).getExecName());
-                pdfexporterGroup.add(d);
-                aux.add(d);
-                for (int j = 0; j < execTasks.get(i).getParams().size(); j++) {
-                    aux.add(new JLabel(execTasks.get(i).getParams().get(j).getParamName()));
-                    aux.add(new JTextField());
-                }
-                PDFexporter.add(aux);
-                rows++;
-            }
-
-
         }
-
-        System.out.println(rows);
-        System.out.println(start + end);
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        setBounds(0, 0, screenSize.width, screenSize.height - 40);
-
-        mainWindow = new JPanel(new GridLayout(rows, 2 * max + 1));
-        setContentPane(mainWindow);
-        int y = 0;
-        for (int i = tasks.indexOf(start); i <= tasks.indexOf(end); i++) {
-            // seteaza titlul sectiune (ex: Preprocesare)
-            mainWindow.add(new JLabel(tasks.get(i)));
-            for (int j = 0; j < 2 * max; j++) {
-                mainWindow.add(new JLabel());
-            }
-            switch (i) {
-                case 0:
-                    for (int j = 0; j < Preprocessing.size(); j++) {
-                        // Radio BUtton cu Text
-                        mainWindow.add((JRadioButton) Preprocessing.get(j).get(0));
-                        for (int k = 1; k < Preprocessing.get(j).size(); k++) {
-                            // Adauga parametrii
-                            mainWindow.add((JLabel) Preprocessing.get(j).get(k));
-                            mainWindow.add((JTextField) Preprocessing.get(j).get(k + 1));
-                            k++;
-                        }
-                        for (int k = Preprocessing.get(j).size(); k < 2 * max + 1; k++) {
-                            mainWindow.add(new JLabel());
-                        }
-                    }
-                    break;
-                case 1:
-                    for (int j = 0; j < Binarization.size(); j++) {
-                        mainWindow.add((JRadioButton) Binarization.get(j).get(0));
-                        for (int k = 1; k < Binarization.get(j).size(); k++) {
-                            mainWindow.add((JLabel) Binarization.get(j).get(k));
-                            mainWindow.add((JTextField) Binarization.get(j).get(k + 1));
-                            k++;
-                        }
-                        for (int k = Binarization.get(j).size(); k < 2 * max + 1; k++) {
-                            mainWindow.add(new JLabel());
-                        }
-                    }
-                    break;
-                case 2:
-                    for (int j = 0; j < Layout.size(); j++) {
-                        mainWindow.add((JRadioButton) Layout.get(j).get(0));
-                        for (int k = 1; k < Layout.get(j).size(); k++) {
-                            mainWindow.add((JLabel) Layout.get(j).get(k));
-                            mainWindow.add((JTextField) Layout.get(j).get(k + 1));
-                            k++;
-                        }
-                        for (int k = Layout.get(j).size(); k < 2 * max + 1; k++) {
-                            mainWindow.add(new JLabel());
-                        }
-                    }
-                    break;
-                case 3:
-                    for (int j = 0; j < Paging.size(); j++) {
-                        mainWindow.add((JRadioButton) Paging.get(j).get(0));
-                        for (int k = 1; k < Paging.get(j).size(); k++) {
-                            mainWindow.add((JLabel) Paging.get(j).get(k));
-                            mainWindow.add((JTextField) Paging.get(j).get(k + 1));
-                            k++;
-                        }
-                        for (int k = Paging.get(j).size(); k < 2 * max + 1; k++) {
-                            mainWindow.add(new JLabel());
-                        }
-                    }
-                    break;
-                case 4:
-                    for (int j = 0; j < OCR.size(); j++) {
-                        mainWindow.add((JRadioButton) OCR.get(j).get(0));
-                        for (int k = 1; k < OCR.get(j).size(); k++) {
-                            mainWindow.add((JLabel) OCR.get(j).get(k));
-                            mainWindow.add((JTextField) OCR.get(j).get(k + 1));
-                            k++;
-                        }
-                        for (int k = OCR.get(j).size(); k < 2 * max + 1; k++) {
-                            mainWindow.add(new JLabel());
-                        }
-                    }
-                    break;
-                case 5:
-                    for (int j = 0; j < Hierarchy.size(); j++) {
-                        mainWindow.add((JRadioButton) Hierarchy.get(j).get(0));
-                        for (int k = 1; k < Hierarchy.get(j).size(); k++) {
-                            mainWindow.add((JLabel) Hierarchy.get(j).get(k));
-                            mainWindow.add((JTextField) Hierarchy.get(j).get(k + 1));
-                            k++;
-                        }
-                        for (int k = Hierarchy.get(j).size(); k < 2 * max + 1; k++) {
-                            mainWindow.add(new JLabel());
-                        }
-                    }
-                    break;
-                case 6:
-                    for (int j = 0; j < PDFexporter.size(); j++) {
-                        mainWindow.add((JRadioButton) PDFexporter.get(j).get(0));
-                        for (int k = 1; k < PDFexporter.get(j).size(); k++) {
-                            mainWindow.add((JLabel) PDFexporter.get(j).get(k));
-                            mainWindow.add((JTextField) PDFexporter.get(j).get(k + 1));
-                            k++;
-                        }
-                        for (int k = PDFexporter.get(j).size(); k < 2 * max + 1; k++) {
-                            mainWindow.add(new JLabel());
-                        }
-                    }
-                    break;
-            }
-        }
-        //mainWindow.add(new JLabel("aedsfvca"));
-/*		JButton btn_execute = new JButton();
-         btn_execute.setText("Execute");
-         mainWindow.add(btn_execute);
-         */ System.out.println(mainWindow.toString());
         setVisible(true);
-        //mainWindow=new JPanel();setContentPane(mainWindow);
-
-        //mainWindow.add(new JButton("ccas"));
     }
 
     public void populateTasks() {
 
-        ArrayList<String> XSDs = ReturnXSDs.getXSDs(schemasDir);
+        ArrayList<String> schemaNames = FileCounter.getFileNames(schemasDir);
 
-        for (String xsd : XSDs) {
-            System.out.println(schemasDir + "\\" + xsd);
-            SchemaParser schemaParser = new SchemaParser(schemasDir + "\\" + xsd);
+        for (String schemaName : schemaNames) {
 
+            SchemaParser schemaParser = new SchemaParser(schemasDir + "\\" + schemaName);
             schemaParser.parse();
+
             ExecutableTask task = schemaParser.getResult();
             task.setExecDir(executablesDir);
-            execTasks.add(schemaParser.getResult());
 
-            System.out.println(schemaParser.getResult().toXMLString());
+            execTasks.add(task);
+
         }
     }
 }

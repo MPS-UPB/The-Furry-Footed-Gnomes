@@ -16,7 +16,6 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
-
 import schemaparser.ExecutableTask;
 
 public class InputFileSelector extends JDialog {
@@ -26,7 +25,6 @@ public class InputFileSelector extends JDialog {
     private JButton okButton;
     private ArrayList<ExecutableTask> tasksToProcess;
     private String outputDir;
-     
 
     /**
      * Create the dialog.
@@ -56,6 +54,7 @@ public class InputFileSelector extends JDialog {
 
         JButton btnBrowse = new JButton("Browse");
         btnBrowse.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent arg0) {
                 if (browser.showDialog(InputFileSelector.this, "Select File") == 0) {
                     textField.setText(browser.getSelectedFile().toString());
@@ -81,11 +80,12 @@ public class InputFileSelector extends JDialog {
             getContentPane().add(buttonPane, BorderLayout.SOUTH);
             {
                 okButton = new JButton("OK");
-				okButton.addActionListener(new ActionListener() {
-+          			public void actionPerformed(ActionEvent arg0) {
-+            		startExecution();
-+          		}
-+        		});
+                okButton.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent arg0) {
+                        startExecution();
+                    }
+                });
                 okButton.setActionCommand("OK");
                 okButton.setEnabled(false);
                 buttonPane.add(okButton);
@@ -94,6 +94,7 @@ public class InputFileSelector extends JDialog {
             {
                 JButton cancelButton = new JButton("Cancel");
                 cancelButton.addActionListener(new ActionListener() {
+                    @Override
                     public void actionPerformed(ActionEvent e) {
                         dispose();
                     }
