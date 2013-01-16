@@ -60,6 +60,10 @@ public class Setup extends JDialog {
         
     }
 
+    public File getConfigFile () {
+        return configFile;
+    }
+    
     private void createInterface() {
         
         setBackground(SystemColor.activeCaptionBorder);
@@ -312,7 +316,6 @@ public class Setup extends JDialog {
         BufferedWriter bufferedWriter = null;
 
         try {
-
             fileWriter = new FileWriter(configFile);
             bufferedWriter = new BufferedWriter(fileWriter);
             bufferedWriter.write("ExecutablesDir=" + parent.getExecutablesDir() + "\n");
