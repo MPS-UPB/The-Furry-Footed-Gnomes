@@ -1,3 +1,4 @@
 
 # Java compiled classes
 *.class
+/Code/DocumentManager/dist/

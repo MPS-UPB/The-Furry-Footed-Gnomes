@@ -112,7 +112,7 @@ public class InputFileSelector extends JDialog {
         filesInput.add(textField.getText());
         ArrayList<String> filesOutput = new ArrayList<>();
         File f = new File(textField.getText());
-        filesOutput.add(outputDir + "\\" + "res_" + f.getName());
+        filesOutput.add(outputDir + "\\" + f.getName());
 
         we.execute(filesInput, filesOutput);
 

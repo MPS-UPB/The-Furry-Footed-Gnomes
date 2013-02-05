@@ -88,19 +88,6 @@ public class ExecutableTask {
         execParams.add(param);
     }
     
-    /**
-     * Sets value to parameter
-     * 
-     * @param name
-     * @param value
-     */
-    public void setSingleParam (String name, String value) {
-    	for (ExecutableParameter ep : execParams) {
-    		if (ep.getParamName().compareTo(name) == 0) {
-    			ep.setParamValue(value);
-    		}
-    	}
-    }
 
     /**
      * Returns the list of parameters.
